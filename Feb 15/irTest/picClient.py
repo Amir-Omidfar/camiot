@@ -9,7 +9,7 @@ import picamera
 # Connect a client socket to my_server:8000 (change my_server to the
 # hostname of your server)
 client_socket = socket.socket()
-client_socket.connect(('192.168.1.25', 8200))
+client_socket.connect(('192.168.1.108', 8200))
 import RPi.GPIO as GPIO
 from time import sleep
 GPIO.setwarnings(False)
