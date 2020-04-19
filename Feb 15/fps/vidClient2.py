@@ -31,6 +31,7 @@ while True:
     ret,frame=cap.read() 
     if i%10 == 0:
         data = pickle.dumps(frame)
+        print(len(data))
         client.sendall(bytes(len(data),"utf-8")+data)
         #client_socket.sendall(struct.pack("package", len(data))+data)
     stop = time.time()

@@ -19,7 +19,7 @@ try:
     # Start recording, sending the output to the connection for 60
     # seconds, then stop
     camera.start_recording(connection, format='h264')
-    camera.wait_recording(10)
+    camera.wait_recording(100)
     camera.stop_recording()
 finally:
     connection.close()
