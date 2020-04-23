@@ -17,7 +17,8 @@ cap=cv2.VideoCapture(0)
 clientsocket=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 clientsocket.connect(('192.168.1.108',8089))
 
-
+state=clientsocket.recv().decode
+print(state)
 
 while True:
 

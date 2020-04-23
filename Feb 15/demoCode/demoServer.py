@@ -40,11 +40,11 @@ import pyttsx3
 import serverFunctions
 from serverFunctions import *
 from engine_simple_infer_STANDARD_VGG_classification import appliance_recognition
-
+from engine_simple_infer_STANDARD_VGG_classification import *
 # voice command init
 engine = pyttsx3.init()
-# state 1 is for object detection and state 0 is for finger Interaction
-state = 1
+# 0= object detection 1=finger interaction
+state = 0
 
 
 
@@ -54,21 +54,26 @@ state = 1
 
 
 #Make a connection with the client
-#s,conn,addr=create_connection()
+s,conn,addr=create_connection()
 #wait until the connection is created
 welcome_msg()
-result_prob, result_items=appliance_recognition('/Users/ApplePro/Desktop/School/GradSchool/Research /HCI/camiot/Feb 15/demoCode/data/cf_left.jpg')
-print(result_prob)
-print(result_items)
+#result_prob, result_items=appliance_recognition('/Users/ApplePro/Desktop/School/GradSchool/Research /HCI/camiot/Feb 15/demoCode/test_Img/lamp_right.jpg')
+#print(result_prob)
+#print(result_items)
+conn.send(1.encode())
 
-'''
 while True :
-	if (state == 1):
-		# Enter the detection loop
-		picRecv(3,conn)
-	elif (state == 0):
-		# Enter the finger interaction loop
-'''
+	#start with detection algo
+	if (state == 0):	print ('Socket bind complete')
+
+		imgName=picRecv(1,conn)
+		result_prob, result_items=appliance_recognition(imgName)
+
+
+
+
+
+	
 
 
 
