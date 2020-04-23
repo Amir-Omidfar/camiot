@@ -8,7 +8,7 @@ import numpy as np
 
 classifier = load ('/home/pi/Desktop/trigger/triggerTrain26-2.joblib')
 
-def imuTri():
+def trigger():
   imuData = open("imuPredictData.csv","a")
   
   active = True
@@ -57,6 +57,6 @@ def imuTri():
           data.pop(0)
         #data.clear()
 
-while True:
-  imuTri()
+#while True:
+ # imuTri()
 #imuTri()
