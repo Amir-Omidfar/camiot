@@ -14,10 +14,13 @@ from testImuCon import trigger
 state=0 # 0= object detection 1=finger interaction
 
 cap=cv2.VideoCapture(0)
-clientsocket=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-clientsocket.connect(('192.168.1.108',8089))
+c=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+c.connect(('192.168.1.108',8080))
 
-state=clientsocket.recv().decode
+sc=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+sc.connect(('192.168.1.108',8081))
+
+state=clientsocket.recv(4).decode()
 print(state)
 
 while True:

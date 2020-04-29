@@ -25,7 +25,7 @@ IMG_SCALES = (256, 256)
 NORM_CONFIG = {'mean': [123.675, 116.28, 103.53], 'std': [128.0, 128.0, 128.0], 'to_rgb': True}
 NUM_CLASS = 5
 # checkpoints
-CHECKPOINT_FILE = '/yuanProject/CAMIOT/object_recognition_workdir/epoch_300.pth'
+CHECKPOINT_FILE = '/Users/ApplePro/Desktop/School/GradSchool/Research /HCI/camiot/Feb 15/demoCode/epoch_300.pth'
 
 
 import torch.nn as nn

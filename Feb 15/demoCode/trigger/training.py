@@ -5,7 +5,8 @@ from sklearn import tree
 from joblib import dump, load
 
 
-dataset = pd.read_csv("/home/pi/Desktop/trigger/imuDataAccel-26-2-20.csv")
+dataset = pd.read_csv("/home/pi/Desktop/camiot/Feb15/demoCode/rotation_trigger/imuDataGyro-25-4-20.csv")
+
 
 
 
@@ -27,7 +28,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
 from sklearn.tree import DecisionTreeClassifier
 classifier = DecisionTreeClassifier() 
 classifier.fit(X_train, y_train)
-dump(classifier, 'triggerTrain26-2.joblib')
+dump(classifier, 'triggerTrain25-4.joblib')
 print("Size of X_test",len(X_test))
 
 y_pred = classifier.predict(X_test)

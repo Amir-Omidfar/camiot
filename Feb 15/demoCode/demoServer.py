@@ -1,33 +1,7 @@
 	#Server code for demo May 6th 
 
 
-'''
-while True:
-	1. trigger mechanism for taking pic (client)
-	2. process the pic and announce the result (server)
-	3-a. if it's the desired item wait 2 sec to enter the next loop
-	3-b. othewise toggle through the possible options until the desired option
-		
-	--> printer(80) coffee maker(10%) tv(10%) ....	(try toggle )
-		use twisting gesture for confirming the selection or for toggling in the menu
-	detection block (Yuan's algo) (takes on image, return as above )
 
-	4. Enter finger interaction by taking pics continously
-		finger intearction algo (input : take images in while looop as fast as possible)
-			audio feedback for the user to confirm his gesture, drop the finger if they are happy with the results 
-	5. Process the pics and say the result   
-	6. Given the appliance matches the direction detected to the function avaliable
-
-	# Server side 
-	1. appliance detection algorithm
-	2. finger detection algorithm
-	3. voice command implementation in both algorithms 
-
-	# Client side
-	1. Trigger
-	2. take and send picture
-
-'''
 #Server code for demo May 6th 
 import socket
 import sys
@@ -39,50 +13,123 @@ import time
 import pyttsx3
 import serverFunctions
 from serverFunctions import *
-from engine_simple_infer_STANDARD_VGG_classification import appliance_recognition
 from engine_simple_infer_STANDARD_VGG_classification import *
+from finger_direction_4_20 import *
+from threading import Thread 
+from subprocess import call
+
+
+
 # voice command init
 engine = pyttsx3.init()
+
 # 0= object detection 1=finger interaction
 state = 0
+#result_items=['lamp','tv','coffee maker','toaster','printer']
+result_prob=[]
+obj_num=0
+msg='0'  
+counter=1
+p_opt=""
+c_opt=""
+angle=0
+appliance=""
+finger_flag=False
+counter2=0
 
 
+'''
+msg='0' --> first stage to take pic and do the detection
+msg='1' --> toggle to the next item
+msg='2' --> moving to the finger interaction part 
+msg='3' --> going back to the beginning of the loop (take pic for obj detection)
+'''
+s0,conn0,add0=create_connection(PORT=1340)
+time.sleep(1)
 
-
-
-
-
-
-#Make a connection with the client
-s,conn,addr=create_connection()
 #wait until the connection is created
 welcome_msg()
-#result_prob, result_items=appliance_recognition('/Users/ApplePro/Desktop/School/GradSchool/Research /HCI/camiot/Feb 15/demoCode/test_Img/lamp_right.jpg')
-#print(result_prob)
-#print(result_items)
-conn.send(1.encode())
+
+
+
+
+
+
+
+
+
+
 
 while True :
-	#start with detection algo
-	if (state == 0):	print ('Socket bind complete')
+	msg='0'
+	imgName=picRecv(conn0,0,counter=counter2)
+	time.sleep(0.5)
+	result_prob, result_items=appliance_recognition(imgName)	
+	appliace=result_items[obj_num]
 
-		imgName=picRecv(1,conn)
-		result_prob, result_items=appliance_recognition(imgName)
+	#call(["python3", "speak.py", appliace])
+	speak2(appliace)
+	#engine.say(appliace)
+	#engine.runAndWait()
+	print(result_items)
+	counter2=counter2+1
+	pack=result_items[0]+','+result_items[1]+','+result_items[2]+','+result_items[3]+','+result_items[4]
+	print(pack)
 
+	pack=pack.encode('utf-8')
+	conn0.sendall(pack)	
 
+	while (msg == '0'):
+		msg=conn0.recv(1)
+		msg=msg.decode('utf-8')
+		if (msg == '1'):
+			obj_num=obj_num+1
+			appliace=result_items[obj_num]
+			#engine.say(appliace)
+			#engine.runAndWait()
+			#call(["python3", "speak.py", appliace])
+			speak2(appliace)
+			msg='0'
+		elif (msg == '2'):
+			#engine.say('select options')
+			#engine.runAndWait()
+			#call(["python3", "speak.py", 'Select options'])
+			speak2(appliace)
+	conn0.sendall(b'1')
 
+	while(msg == '2'):
+		conn0.sendall(b'4')
+		imgName=picRecv(conn0,1,counter=counter)
+		counter=counter+1
 
+		finger_flag,angle=finger_recognition(imgName)
+		#print(finger_flag,angle)
 
-	
+		if (finger_flag):
+			if (angle > 5):
+				c_opt='left'
+			elif (angle < -20):
+				c_opt='right'
+			elif (angle>-20) and (angle<5):
+				c_opt='middle'
+			print(c_opt)
+			if (c_opt != p_opt):
+				appCall(appliace,c_opt)
+				#engine.say(c_opt)
+				#engine.runAndWait()
 
-
-
-
-
-
-
-
-
-
-
+		elif (not finger_flag and p_opt != ""):
+			option=p_opt
+			#print(p_opt)
+			s=time.time()
+			#engine.say('confirmed')
+			#engine.runAndWait()
+			#call(["python3", "speak.py", 'confirmed'])
+			speak2('confirmed')
+			#appCall(appliace,option)
+			conn0.sendall(b'5')
+			msg='0'
+		p_opt=c_opt
+		
+		
 
